@@ -120,12 +120,26 @@ extension duckdb_hugeint {
 // MARK: - Unsigned Huge Int
 
 extension duckdb_uhugeint {
-  
+
   init(_ source: UIntHuge) {
     self = duckdb_uhugeint(lower: source.low, upper: source.high)
   }
-  
+
   var asUIntHuge: UIntHuge { .init(high: upper, low: lower) }
+
+  /// The flipped-sign uhugeint representation DuckDB uses for UUID storage,
+  /// derived from a `UUID`'s big-endian bytes. Inverse of `duckdb_hugeint.asUUID`.
+  init(uuid: UUID) {
+    let b = uuid.uuid
+    var value: UIntHuge = 0
+    for byte in [
+      b.0, b.1, b.2, b.3, b.4, b.5, b.6, b.7,
+      b.8, b.9, b.10, b.11, b.12, b.13, b.14, b.15,
+    ] {
+      value = (value << 8) | UIntHuge(byte)
+    }
+    self = duckdb_uhugeint(lower: value.low, upper: value.high)
+  }
 }
 
 // MARK: - Time
