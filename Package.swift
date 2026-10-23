@@ -419,6 +419,7 @@ let package = Package(
         "duckdb/generated_extension_loader_package_build.cpp",
       ],
       cxxSettings: [
+        .define("NDEBUG", .when(configuration: .release)),
         .headerSearchPath("duckdb/src/include"),
         .headerSearchPath("duckdb/third_party/concurrentqueue"),
         .headerSearchPath("duckdb/third_party/fast_float"),
